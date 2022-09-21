@@ -14,6 +14,8 @@ using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using System.Xml.Linq;
 using System.Reflection;
+using GlobalOPT.Properties;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
 
 namespace GlobalOPT
 {
@@ -26,6 +28,9 @@ namespace GlobalOPT
 
         [DllImport("user32.dll")]
         private static extern bool ShowWindow(IntPtr hwnd, int nCmdShow);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        private static extern IntPtr SendMessage(IntPtr hWnd, int wMsg, IntPtr wParam, IntPtr lParam);
 
         static bool softwareInstallation = false;
         static bool isDockerRunning = false;//Is docker running variable
@@ -40,7 +45,8 @@ namespace GlobalOPT
         static string dockerFilePath = desktopPath + "\\GlobalOPTFW\\" + gitRepoName;
         static string textFilePath = desktopPath + "\\result.txt";
         static string algorithm = "", iteration = "", threshold = "", depth = "", num_matrices = "", bfi = "";
-        private bool Ready = false;
+        private const int WM_VSCROLL = 277;
+        private const int SB_PAGEBOTTOM = 7;
 
         private bool Is_Form_Loaded_Already(string FormName)
         {
@@ -69,7 +75,7 @@ namespace GlobalOPT
             if (!File.Exists(textFilePath))
                 File.Create(textFilePath).Close();//Create result.txt file if does not exist
             File.AppendAllText(textFilePath, buildOutput);
-            Echo("Result file succesfully written on result file on Desktop\n\nPress any key to exit");
+            Echo("Result file succesfully written on result file on Desktop");
             //Saving results in result.txt file
         }
         void InstallRequiredSoftwares()//Install docker and git if its not installed
@@ -112,7 +118,7 @@ namespace GlobalOPT
         void Restart()//Restart the application
         {
             System.Diagnostics.Process.Start(Assembly.GetExecutingAssembly().Location);
-            Environment.Exit(0);
+            Application.Exit();
         }
         void DockerInstall()//Installing Docker via powershell
         {
@@ -150,6 +156,12 @@ namespace GlobalOPT
                 Echo("Docker found.");
 
         }
+
+        internal static void ScrollToBottom(RichTextBox richTextBox)
+        {
+            SendMessage(richTextBox.Handle, WM_VSCROLL, (IntPtr)SB_PAGEBOTTOM, IntPtr.Zero);
+            richTextBox.SelectionStart = richTextBox.Text.Length;
+        }
         void StartDocker()//Starts docker.backend
         {
             bool procK = false;
@@ -162,7 +174,7 @@ namespace GlobalOPT
             }
             while (proc.MainWindowHandle == IntPtr.Zero) //note: only works as long as your process actually creates a main window.
                 System.Threading.Thread.Sleep(10);
-            ShowWindow(proc.MainWindowHandle,0);//Hide command window for better visualization
+            ShowWindow(proc.MainWindowHandle, 0);//Hide command window for better visualization
         }
 
         void CreateDockerImage()//Building docker image with params
@@ -179,7 +191,7 @@ namespace GlobalOPT
                 threshold = threshold != string.Empty ? threshold : lines[3].Split('=')[1];
                 depth = depth != string.Empty ? depth : lines[4].Split('=')[1];
                 num_matrices = num_matrices != string.Empty ? num_matrices : lines[5].Split('=')[1];
-                bfi = bfi != string.Empty ? bfi : lines[6].Split('=')[1];
+                bfi = bfi != string.Empty ? bfi : lines[6].Split('=')[1]; 
                 ChangeParameters();//Change parameter.txt with inserted params
                 Echo("Implementing completed");
             }
@@ -203,7 +215,7 @@ namespace GlobalOPT
         {
             RichTextBox.CheckForIllegalCrossThreadCalls = false;
             Thread.Sleep(2000);
-            test();
+            Startup();
         }
         void ClearAndUpdate()//Clear old builds and update repo if need
         {
@@ -241,6 +253,7 @@ namespace GlobalOPT
             Process process = new System.Diagnostics.Process();
             ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
             startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
+            startInfo.CreateNoWindow = true;
             startInfo.FileName = "cmd.exe";
             startInfo.UseShellExecute = false;
             startInfo.RedirectStandardOutput = true;
@@ -249,56 +262,23 @@ namespace GlobalOPT
             process.Start();
             string output = process.StandardOutput.ReadToEnd();
             process.WaitForExit();
-            Echo(output,Color.White);
+            Echo(output, Color.White);
             Thread.Sleep(100);
             return output;
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void RunButton_Click(object sender, EventArgs e)
         {
-            Echo("Welcome to the GlobalOPT");
-            Thread.Sleep(1000);
-            Echo("Checking required softwares...");
-
-            //Is docker running checking
-            Process[] pname = Process.GetProcessesByName("com.docker.backend");
-            if (pname.Length == 0)
-            {
-                KillDocker(); Echo("Docker is not running or installed!");
-            }
-            else
-            {
-                pname = Process.GetProcessesByName("docker");
-                if (pname.Length == 0)
-                {
-                    KillDocker(); Echo("Docker is not running or installed!");
-                }
-                else
-                { isDockerRunning = true; Echo("Docker is running!"); }
-            }
-            InstallRequiredSoftwares();//Install docker and git if its not installed
-            try
-            {
-                File.Delete("gitinstaller.ps1");//Delete Git Installer shell script for cleaning
-                File.Delete("dockerinstaller.ps1");//Delete Docker Installer shell script for cleaning
-            }
-            catch { }
-            if (softwareInstallation)//If any software installed
-                Echo("Checking completed. System now has all required softwares");
-            else
-                Echo("Checking completed. System has all required softwares");
-            DockerStartup:
-            if (!isDockerRunning)//is docker not running start it
-            {
-                Echo("Docker starting.");
-                StartDocker();
-                Thread.Sleep(10000);//docker engine will startup in 10s(idk why)
-                Echo("Docker started.");
-            }
-            ClearAndUpdate();//Clear old builds and update repo if need
-            Echo("Insert Parameters");
+            iteration = iterationNumeric.Value.ToString();
+            num_matrices = matricesNumeric.Value.ToString();
+            depth = depthNumeric.Value.ToString();
+            threshold = thresholdNumeric.Value.ToString();
+            bfi = bfiNumeric.Value.ToString();
+            if (!Directory.Exists(gitRepoClonePath)) GitClone();//if repo does not exists clone it
+            CreateDockerImage();//create docker image with git repo
+            RunDockerBuild();//run the docker image
         }
-        void test()
+        void Startup()
         {
             Echo("Welcome to the GlobalOPT");
             Thread.Sleep(1000);
@@ -341,6 +321,14 @@ namespace GlobalOPT
             }
             ClearAndUpdate();//Clear old builds and update repo if need
             Echo("Insert Parameters");
+            EnableInputs();
+        }
+
+        void EnableInputs()
+        {
+            algorithmSelection.Enabled = true;
+            algorithmLabel.Enabled = true;
+            RunButton.Enabled=true;
         }
 
         private void Form1_Shown(object sender, EventArgs e)
@@ -348,14 +336,83 @@ namespace GlobalOPT
             backgroundWorker1.RunWorkerAsync();
         }
 
-        
+        private void algorithmSelection_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            algorithm = algorithmSelection.SelectedIndex.ToString(); 
+            if (algorithm != "0")//If 0 selected for algorithm it will use default settings(on git repo) or if you have your params from last time it will use it
+            {
+                switch (algorithm)
+                {
+                    case "2":
+                        matricesNumeric.Enabled = true; matricesLabel.Enabled = true;
+                        thresholdNumeric.Enabled = true; thresholdLabel.Enabled = true;
+                        depthNumeric.Enabled = true; depthLabel.Enabled = true;
+                        bfiNumeric.Enabled = false; bfiLabel.Enabled = false;
+                        iterationNumeric.Enabled = false; iterationLabel.Enabled = false;
+                        break;
+                    case "6":
+                        matricesNumeric.Enabled = true; matricesLabel.Enabled = true;
+                        thresholdNumeric.Enabled = true; thresholdLabel.Enabled = true;
+                        depthNumeric.Enabled = false; depthLabel.Enabled = false;
+                        bfiNumeric.Enabled = false; bfiLabel.Enabled = false;
+                        iterationNumeric.Enabled = false; iterationLabel.Enabled = false;
+                        break;
+                    case "7":
+                        matricesNumeric.Enabled = true; matricesLabel.Enabled = true;
+                        thresholdNumeric.Enabled = true; thresholdLabel.Enabled = true;
+                        depthNumeric.Enabled = false; depthLabel.Enabled = false;
+                        bfiNumeric.Enabled = false; bfiLabel.Enabled = false;
+                        iterationNumeric.Enabled = false; iterationLabel.Enabled = false;
+                        break;
+                    case "16":
+                        matricesNumeric.Enabled = true; matricesLabel.Enabled = true;
+                        thresholdNumeric.Enabled = true; thresholdLabel.Enabled = true;
+                        depthNumeric.Enabled = true; depthLabel.Enabled = true;
+                        bfiNumeric.Enabled = true; bfiLabel.Enabled = true;
+                        iterationNumeric.Enabled = false; iterationLabel.Enabled = false;
+                        break;
+                    default:
+                        matricesNumeric.Enabled = false; matricesLabel.Enabled = false;
+                        thresholdNumeric.Enabled = false; thresholdLabel.Enabled = false;
+                        depthNumeric.Enabled = false; depthLabel.Enabled = false;
+                        bfiNumeric.Enabled = false; bfiLabel.Enabled = false;
+                        iterationNumeric.Enabled = true; iterationLabel.Enabled = true;
+                        break;
+                }
+            }
+            else
+            {
+                iterationNumeric.Enabled = false; iterationLabel.Enabled = false;
+                Echo("Last parameters will be used");
+            }
 
-        private void button2_Click(object sender, EventArgs e)
+        } 
+
+        private void restartServicesToolStripMenuItem_Click_1(object sender, EventArgs e)
         {
             KillDocker();
             Thread.Sleep(100);
-            //StartDocker();
+            Restart();
         }
+
+        private void clearConsoleToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            output.Clear();
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            var procs = Process.GetProcessesByName("cmd");
+            foreach(var proc in procs)
+            {   
+                ShowWindow(proc.MainWindowHandle, 0);
+            } 
+        }
+
+        private void aboutUsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Process.Start("https://github.com/mraposka");
+        } 
 
         static void ProcKil(string proc)
         {
@@ -373,86 +430,38 @@ namespace GlobalOPT
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            Echo("Initializing..."); 
-            //Is docker running checking
-
-            /*Taking params
-            Console.WriteLine("Enter R For Restart Services");
-            Console.WriteLine("Enter 0 For Skip All Parameters");
-            Console.WriteLine("Leave Empty For Skip Parameter");
-            Console.Write("Select an Algorithm: ");
-            algorithm = Console.ReadLine();
-            if (algorithm.ToUpper() == "R")
+            string algorithms=
+            "ALGORITHM = 1 - XZLBZ,"+
+            "ALGORITHM = 2 - BP,"+
+            "ALGORITHM = 3 - RNBP,"+
+            "ALGORITHM = 4 - A1,"+
+            "ALGORITHM = 5 - A2,"+
+            "ALGORITHM = 6 - Paar1,"+
+            "ALGORITHM = 7 - Paar2,"+
+            "ALGORITHM = 8 - LWFWSW,"+
+            "ALGORITHM = 9 - BFI,"+
+            "ALGORITHM = 10 - BFI-Paar1,"+
+            "ALGORITHM = 11 - BFI-RPaar1,"+
+            "ALGORITHM = 12 - BFI-BP,"+
+            "ALGORITHM = 13 - BFI-A1,"+
+            "ALGORITHM = 14 - BFI-A2,"+
+            "ALGORITHM = 15 - BFI-RNBP,"+
+            "ALGORITHM = 16 - BFI-BP-depthConstrained,";
+            for(int i = 0; i < algorithms.Split(',').Length-1; i++)
             {
-                KillDocker();
-                isDockerRunning = false;
-                Echo("Restarting services...");
-                Thread.Sleep(1000);
-                Console.Clear();
-                goto DockerStartup;
+                algorithmSelection.Items.Add(algorithms.Split(',')[i]);
             }
-            if (algorithm != "0")//If 0 selected for algorithm it will use default settings(on git repo) or if you have your params from last time it will use it
-            {
-                switch (algorithm)
-                {
-                    case "2":
-                        Console.Write("Number of Matrices: ");
-                        num_matrices = Console.ReadLine();
-                        Console.Write("Threshold Value: ");
-                        threshold = Console.ReadLine();
-                        Console.Write("Depth Value: ");
-                        depth = Console.ReadLine();
-                        break;
-                    case "6":
-                        Console.Write("Number of Matrices: ");
-                        num_matrices = Console.ReadLine();
-                        Console.Write("Threshold Value: ");
-                        threshold = Console.ReadLine();
-                        break;
-                    case "7":
-                        Console.Write("Number of Matrices: ");
-                        num_matrices = Console.ReadLine();
-                        Console.Write("Threshold Value: ");
-                        threshold = Console.ReadLine();
-                        break;
-                    case "16":
-                        Console.Write("Threshold Value: ");
-                        threshold = Console.ReadLine();
-                        Console.Write("Depth Value: ");
-                        depth = Console.ReadLine();
-                        Console.Write("Number of Matrices: ");
-                        num_matrices = Console.ReadLine();
-                        Console.Write("BFI Value: ");
-                        bfi = Console.ReadLine();
-                        break;
-                    default:
-                        Console.Write("Number of Iteration: ");
-                        iteration = Console.ReadLine();
-                        break;
-                }
-                Echo("Parameters saved");
-            }
-            else
-            {
-                Echo("Last parameters will be used");
-            }
-            Taking params
-            if (!Directory.Exists(gitRepoClonePath)) GitClone();//if repo does not exists clone it
-            CreateDockerImage();//create docker image with git repo
-            //RunDockerBuild();//run the docker image
-            */
         }
 
         void Echo(string text, Color color = default)//function that logs with color on terminal 
         {
             output.SelectionStart = output.TextLength;
             output.SelectionLength = 0;
-
             output.SelectionColor = color == default ? Color.LimeGreen : color;
             output.AppendText(text + Environment.NewLine);
             output.SelectionColor = output.ForeColor;
-
             Thread.Sleep(100);
+            ScrollToBottom(output);
         }
     }
 }

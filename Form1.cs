@@ -28,6 +28,7 @@ namespace GlobalOPT
         private static extern bool ShowWindow(IntPtr hwnd, int nCmdShow);
 
         static bool softwareInstallation = false;
+        static bool isDockerRunning = false;//Is docker running variable
         static string strCmdText;
         static string tag = "fw";
         static string name = "opt";
@@ -39,6 +40,19 @@ namespace GlobalOPT
         static string dockerFilePath = desktopPath + "\\GlobalOPTFW\\" + gitRepoName;
         static string textFilePath = desktopPath + "\\result.txt";
         static string algorithm = "", iteration = "", threshold = "", depth = "", num_matrices = "", bfi = "";
+        private bool Ready = false;
+
+        private bool Is_Form_Loaded_Already(string FormName)
+        {
+            foreach (Form form_loaded in Application.OpenForms)
+            {
+                if (form_loaded.Text.IndexOf(FormName) >= 0)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
 
         void RunDockerBuild()//run the docker image
         {
@@ -148,7 +162,7 @@ namespace GlobalOPT
             }
             while (proc.MainWindowHandle == IntPtr.Zero) //note: only works as long as your process actually creates a main window.
                 System.Threading.Thread.Sleep(10);
-            ShowWindow(proc.MainWindowHandle, 0);//Hide command window for better visualization
+            ShowWindow(proc.MainWindowHandle,0);//Hide command window for better visualization
         }
 
         void CreateDockerImage()//Building docker image with params
@@ -185,7 +199,12 @@ namespace GlobalOPT
             Echo(output + "Git Repo Cloned!");
             //Cloning git repo on Desktop
         }
-
+        private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
+        {
+            RichTextBox.CheckForIllegalCrossThreadCalls = false;
+            Thread.Sleep(2000);
+            test();
+        }
         void ClearAndUpdate()//Clear old builds and update repo if need
         {
             //Updating repo
@@ -230,16 +249,112 @@ namespace GlobalOPT
             process.Start();
             string output = process.StandardOutput.ReadToEnd();
             process.WaitForExit();
-            Console.WriteLine(output);
+            Echo(output,Color.White);
             Thread.Sleep(100);
             return output;
         }
 
-        private void button2_Click_1(object sender, EventArgs e)
+        private void button3_Click(object sender, EventArgs e)
+        {
+            Echo("Welcome to the GlobalOPT");
+            Thread.Sleep(1000);
+            Echo("Checking required softwares...");
+
+            //Is docker running checking
+            Process[] pname = Process.GetProcessesByName("com.docker.backend");
+            if (pname.Length == 0)
+            {
+                KillDocker(); Echo("Docker is not running or installed!");
+            }
+            else
+            {
+                pname = Process.GetProcessesByName("docker");
+                if (pname.Length == 0)
+                {
+                    KillDocker(); Echo("Docker is not running or installed!");
+                }
+                else
+                { isDockerRunning = true; Echo("Docker is running!"); }
+            }
+            InstallRequiredSoftwares();//Install docker and git if its not installed
+            try
+            {
+                File.Delete("gitinstaller.ps1");//Delete Git Installer shell script for cleaning
+                File.Delete("dockerinstaller.ps1");//Delete Docker Installer shell script for cleaning
+            }
+            catch { }
+            if (softwareInstallation)//If any software installed
+                Echo("Checking completed. System now has all required softwares");
+            else
+                Echo("Checking completed. System has all required softwares");
+            DockerStartup:
+            if (!isDockerRunning)//is docker not running start it
+            {
+                Echo("Docker starting.");
+                StartDocker();
+                Thread.Sleep(10000);//docker engine will startup in 10s(idk why)
+                Echo("Docker started.");
+            }
+            ClearAndUpdate();//Clear old builds and update repo if need
+            Echo("Insert Parameters");
+        }
+        void test()
+        {
+            Echo("Welcome to the GlobalOPT");
+            Thread.Sleep(1000);
+            Echo("Checking required softwares...");
+
+            //Is docker running checking
+            Process[] pname = Process.GetProcessesByName("com.docker.backend");
+            if (pname.Length == 0)
+            {
+                KillDocker(); Echo("Docker is not running or installed!");
+            }
+            else
+            {
+                pname = Process.GetProcessesByName("docker");
+                if (pname.Length == 0)
+                {
+                    KillDocker(); Echo("Docker is not running or installed!");
+                }
+                else
+                { isDockerRunning = true; Echo("Docker is running!"); }
+            }
+            InstallRequiredSoftwares();//Install docker and git if its not installed
+            try
+            {
+                File.Delete("gitinstaller.ps1");//Delete Git Installer shell script for cleaning
+                File.Delete("dockerinstaller.ps1");//Delete Docker Installer shell script for cleaning
+            }
+            catch { }
+            if (softwareInstallation)//If any software installed
+                Echo("Checking completed. System now has all required softwares");
+            else
+                Echo("Checking completed. System has all required softwares");
+            DockerStartup:
+            if (!isDockerRunning)//is docker not running start it
+            {
+                Echo("Docker starting.");
+                StartDocker();
+                Thread.Sleep(10000);//docker engine will startup in 10s(idk why)
+                Echo("Docker started.");
+            }
+            ClearAndUpdate();//Clear old builds and update repo if need
+            Echo("Insert Parameters");
+        }
+
+        private void Form1_Shown(object sender, EventArgs e)
+        {
+            backgroundWorker1.RunWorkerAsync();
+        }
+
+        
+
+        private void button2_Click(object sender, EventArgs e)
         {
             KillDocker();
             Thread.Sleep(100);
-            StartDocker();
+            //StartDocker();
         }
 
         static void ProcKil(string proc)
@@ -254,13 +369,78 @@ namespace GlobalOPT
             ProcKil("com.docker.proxy");
             ProcKil("com.docker.backend");
             ProcKil("Docker Desktop");
-        } 
+        }
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            Echo("Welcome to the GlobalOPT");
-            Thread.Sleep(1000);
-            Echo("Checking required softwares...", Color.Red);
+            Echo("Initializing..."); 
+            //Is docker running checking
+
+            /*Taking params
+            Console.WriteLine("Enter R For Restart Services");
+            Console.WriteLine("Enter 0 For Skip All Parameters");
+            Console.WriteLine("Leave Empty For Skip Parameter");
+            Console.Write("Select an Algorithm: ");
+            algorithm = Console.ReadLine();
+            if (algorithm.ToUpper() == "R")
+            {
+                KillDocker();
+                isDockerRunning = false;
+                Echo("Restarting services...");
+                Thread.Sleep(1000);
+                Console.Clear();
+                goto DockerStartup;
+            }
+            if (algorithm != "0")//If 0 selected for algorithm it will use default settings(on git repo) or if you have your params from last time it will use it
+            {
+                switch (algorithm)
+                {
+                    case "2":
+                        Console.Write("Number of Matrices: ");
+                        num_matrices = Console.ReadLine();
+                        Console.Write("Threshold Value: ");
+                        threshold = Console.ReadLine();
+                        Console.Write("Depth Value: ");
+                        depth = Console.ReadLine();
+                        break;
+                    case "6":
+                        Console.Write("Number of Matrices: ");
+                        num_matrices = Console.ReadLine();
+                        Console.Write("Threshold Value: ");
+                        threshold = Console.ReadLine();
+                        break;
+                    case "7":
+                        Console.Write("Number of Matrices: ");
+                        num_matrices = Console.ReadLine();
+                        Console.Write("Threshold Value: ");
+                        threshold = Console.ReadLine();
+                        break;
+                    case "16":
+                        Console.Write("Threshold Value: ");
+                        threshold = Console.ReadLine();
+                        Console.Write("Depth Value: ");
+                        depth = Console.ReadLine();
+                        Console.Write("Number of Matrices: ");
+                        num_matrices = Console.ReadLine();
+                        Console.Write("BFI Value: ");
+                        bfi = Console.ReadLine();
+                        break;
+                    default:
+                        Console.Write("Number of Iteration: ");
+                        iteration = Console.ReadLine();
+                        break;
+                }
+                Echo("Parameters saved");
+            }
+            else
+            {
+                Echo("Last parameters will be used");
+            }
+            Taking params
+            if (!Directory.Exists(gitRepoClonePath)) GitClone();//if repo does not exists clone it
+            CreateDockerImage();//create docker image with git repo
+            //RunDockerBuild();//run the docker image
+            */
         }
 
         void Echo(string text, Color color = default)//function that logs with color on terminal 

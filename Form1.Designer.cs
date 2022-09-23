@@ -51,6 +51,7 @@
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.matricesNumeric)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bfiNumeric)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.depthNumeric)).BeginInit();
@@ -67,10 +68,11 @@
             this.output.Dock = System.Windows.Forms.DockStyle.Fill;
             this.output.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.output.ForeColor = System.Drawing.Color.White;
-            this.output.Location = new System.Drawing.Point(599, 3);
+            this.output.Location = new System.Drawing.Point(441, 2);
+            this.output.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.output.Name = "output";
             this.output.ReadOnly = true;
-            this.output.Size = new System.Drawing.Size(860, 499);
+            this.output.Size = new System.Drawing.Size(634, 540);
             this.output.TabIndex = 16;
             this.output.Text = "";
             // 
@@ -82,27 +84,29 @@
             // 
             this.iterationLabel.AutoSize = true;
             this.iterationLabel.Enabled = false;
-            this.iterationLabel.Location = new System.Drawing.Point(12, 120);
-            this.iterationLabel.Margin = new System.Windows.Forms.Padding(10, 0, 10, 0);
+            this.iterationLabel.Location = new System.Drawing.Point(9, 94);
+            this.iterationLabel.Margin = new System.Windows.Forms.Padding(7, 0, 7, 0);
             this.iterationLabel.Name = "iterationLabel";
-            this.iterationLabel.Size = new System.Drawing.Size(132, 37);
+            this.iterationLabel.Size = new System.Drawing.Size(99, 29);
             this.iterationLabel.TabIndex = 6;
             this.iterationLabel.Text = "Iteration";
             // 
             // matricesNumeric
             // 
             this.matricesNumeric.Enabled = false;
-            this.matricesNumeric.Location = new System.Drawing.Point(429, 233);
+            this.matricesNumeric.Location = new System.Drawing.Point(316, 183);
+            this.matricesNumeric.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.matricesNumeric.Name = "matricesNumeric";
-            this.matricesNumeric.Size = new System.Drawing.Size(146, 44);
+            this.matricesNumeric.Size = new System.Drawing.Size(108, 35);
             this.matricesNumeric.TabIndex = 11;
             // 
             // bfiNumeric
             // 
             this.bfiNumeric.Enabled = false;
-            this.bfiNumeric.Location = new System.Drawing.Point(428, 353);
+            this.bfiNumeric.Location = new System.Drawing.Point(315, 277);
+            this.bfiNumeric.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.bfiNumeric.Name = "bfiNumeric";
-            this.bfiNumeric.Size = new System.Drawing.Size(146, 44);
+            this.bfiNumeric.Size = new System.Drawing.Size(108, 35);
             this.bfiNumeric.TabIndex = 15;
             // 
             // algorithmSelection
@@ -112,10 +116,10 @@
             this.algorithmSelection.FormattingEnabled = true;
             this.algorithmSelection.Items.AddRange(new object[] {
             "Use Last Parameters Or Default"});
-            this.algorithmSelection.Location = new System.Drawing.Point(19, 55);
-            this.algorithmSelection.Margin = new System.Windows.Forms.Padding(10, 9, 10, 9);
+            this.algorithmSelection.Location = new System.Drawing.Point(14, 43);
+            this.algorithmSelection.Margin = new System.Windows.Forms.Padding(7, 7, 7, 7);
             this.algorithmSelection.Name = "algorithmSelection";
-            this.algorithmSelection.Size = new System.Drawing.Size(555, 41);
+            this.algorithmSelection.Size = new System.Drawing.Size(410, 41);
             this.algorithmSelection.TabIndex = 5;
             this.algorithmSelection.SelectedIndexChanged += new System.EventHandler(this.algorithmSelection_SelectedIndexChanged);
             // 
@@ -123,37 +127,39 @@
             // 
             this.thresholdLabel.AutoSize = true;
             this.thresholdLabel.Enabled = false;
-            this.thresholdLabel.Location = new System.Drawing.Point(12, 180);
-            this.thresholdLabel.Margin = new System.Windows.Forms.Padding(10, 0, 10, 0);
+            this.thresholdLabel.Location = new System.Drawing.Point(9, 141);
+            this.thresholdLabel.Margin = new System.Windows.Forms.Padding(7, 0, 7, 0);
             this.thresholdLabel.Name = "thresholdLabel";
-            this.thresholdLabel.Size = new System.Drawing.Size(160, 37);
+            this.thresholdLabel.Size = new System.Drawing.Size(123, 29);
             this.thresholdLabel.TabIndex = 9;
             this.thresholdLabel.Text = "Threshold";
             // 
             // depthNumeric
             // 
             this.depthNumeric.Enabled = false;
-            this.depthNumeric.Location = new System.Drawing.Point(429, 293);
+            this.depthNumeric.Location = new System.Drawing.Point(316, 230);
+            this.depthNumeric.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.depthNumeric.Name = "depthNumeric";
-            this.depthNumeric.Size = new System.Drawing.Size(146, 44);
+            this.depthNumeric.Size = new System.Drawing.Size(108, 35);
             this.depthNumeric.TabIndex = 14;
             // 
             // thresholdNumeric
             // 
             this.thresholdNumeric.Enabled = false;
-            this.thresholdNumeric.Location = new System.Drawing.Point(429, 173);
+            this.thresholdNumeric.Location = new System.Drawing.Point(316, 136);
+            this.thresholdNumeric.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.thresholdNumeric.Name = "thresholdNumeric";
-            this.thresholdNumeric.Size = new System.Drawing.Size(146, 44);
+            this.thresholdNumeric.Size = new System.Drawing.Size(108, 35);
             this.thresholdNumeric.TabIndex = 13;
             // 
             // matricesLabel
             // 
             this.matricesLabel.AutoSize = true;
             this.matricesLabel.Enabled = false;
-            this.matricesLabel.Location = new System.Drawing.Point(12, 240);
-            this.matricesLabel.Margin = new System.Windows.Forms.Padding(10, 0, 10, 0);
+            this.matricesLabel.Location = new System.Drawing.Point(9, 188);
+            this.matricesLabel.Margin = new System.Windows.Forms.Padding(7, 0, 7, 0);
             this.matricesLabel.Name = "matricesLabel";
-            this.matricesLabel.Size = new System.Drawing.Size(297, 37);
+            this.matricesLabel.Size = new System.Drawing.Size(223, 29);
             this.matricesLabel.TabIndex = 10;
             this.matricesLabel.Text = "Number of Matrices";
             // 
@@ -161,29 +167,30 @@
             // 
             this.bfiLabel.AutoSize = true;
             this.bfiLabel.Enabled = false;
-            this.bfiLabel.Location = new System.Drawing.Point(12, 360);
-            this.bfiLabel.Margin = new System.Windows.Forms.Padding(10, 0, 10, 0);
+            this.bfiLabel.Location = new System.Drawing.Point(9, 282);
+            this.bfiLabel.Margin = new System.Windows.Forms.Padding(7, 0, 7, 0);
             this.bfiLabel.Name = "bfiLabel";
-            this.bfiLabel.Size = new System.Drawing.Size(66, 37);
+            this.bfiLabel.Size = new System.Drawing.Size(50, 29);
             this.bfiLabel.TabIndex = 8;
             this.bfiLabel.Text = "BFI";
             // 
             // iterationNumeric
             // 
             this.iterationNumeric.Enabled = false;
-            this.iterationNumeric.Location = new System.Drawing.Point(429, 113);
+            this.iterationNumeric.Location = new System.Drawing.Point(316, 89);
+            this.iterationNumeric.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.iterationNumeric.Name = "iterationNumeric";
-            this.iterationNumeric.Size = new System.Drawing.Size(146, 44);
+            this.iterationNumeric.Size = new System.Drawing.Size(108, 35);
             this.iterationNumeric.TabIndex = 12;
             // 
             // RunButton
             // 
             this.RunButton.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.RunButton.Enabled = false;
-            this.RunButton.Location = new System.Drawing.Point(19, 437);
-            this.RunButton.Margin = new System.Windows.Forms.Padding(10, 9, 10, 9);
+            this.RunButton.Location = new System.Drawing.Point(14, 343);
+            this.RunButton.Margin = new System.Windows.Forms.Padding(7, 7, 7, 7);
             this.RunButton.Name = "RunButton";
-            this.RunButton.Size = new System.Drawing.Size(556, 47);
+            this.RunButton.Size = new System.Drawing.Size(410, 37);
             this.RunButton.TabIndex = 2;
             this.RunButton.Text = "Run";
             this.RunButton.UseVisualStyleBackColor = true;
@@ -193,10 +200,10 @@
             // 
             this.depthLabel.AutoSize = true;
             this.depthLabel.Enabled = false;
-            this.depthLabel.Location = new System.Drawing.Point(12, 300);
-            this.depthLabel.Margin = new System.Windows.Forms.Padding(10, 0, 10, 0);
+            this.depthLabel.Location = new System.Drawing.Point(9, 235);
+            this.depthLabel.Margin = new System.Windows.Forms.Padding(7, 0, 7, 0);
             this.depthLabel.Name = "depthLabel";
-            this.depthLabel.Size = new System.Drawing.Size(102, 37);
+            this.depthLabel.Size = new System.Drawing.Size(77, 29);
             this.depthLabel.TabIndex = 7;
             this.depthLabel.Text = "Depth";
             // 
@@ -204,10 +211,10 @@
             // 
             this.algorithmLabel.AutoSize = true;
             this.algorithmLabel.Enabled = false;
-            this.algorithmLabel.Location = new System.Drawing.Point(182, 12);
-            this.algorithmLabel.Margin = new System.Windows.Forms.Padding(10, 0, 10, 0);
+            this.algorithmLabel.Location = new System.Drawing.Point(134, 9);
+            this.algorithmLabel.Margin = new System.Windows.Forms.Padding(7, 0, 7, 0);
             this.algorithmLabel.Name = "algorithmLabel";
-            this.algorithmLabel.Size = new System.Drawing.Size(154, 37);
+            this.algorithmLabel.Size = new System.Drawing.Size(115, 29);
             this.algorithmLabel.TabIndex = 4;
             this.algorithmLabel.Text = "Algorithm";
             // 
@@ -216,10 +223,12 @@
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.restartServicesToolStripMenuItem,
             this.clearConsoleToolStripMenuItem,
-            this.aboutUsToolStripMenuItem});
+            this.aboutUsToolStripMenuItem,
+            this.exitToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1462, 24);
+            this.menuStrip1.Padding = new System.Windows.Forms.Padding(4, 2, 0, 2);
+            this.menuStrip1.Size = new System.Drawing.Size(1077, 24);
             this.menuStrip1.TabIndex = 18;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -259,10 +268,11 @@
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.GrowStyle = System.Windows.Forms.TableLayoutPanelGrowStyle.FixedSize;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 24);
+            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 1;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(1462, 505);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(1077, 544);
             this.tableLayoutPanel1.TabIndex = 19;
             // 
             // panel1
@@ -281,22 +291,30 @@
             this.panel1.Controls.Add(this.iterationNumeric);
             this.panel1.Controls.Add(this.bfiLabel);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(3, 3);
+            this.panel1.Location = new System.Drawing.Point(2, 2);
+            this.panel1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(590, 499);
+            this.panel1.Size = new System.Drawing.Size(435, 540);
             this.panel1.TabIndex = 20;
+            // 
+            // exitToolStripMenuItem
+            // 
+            this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(38, 20);
+            this.exitToolStripMenuItem.Text = "Exit";
+            this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(19F, 37F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(14F, 29F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.ClientSize = new System.Drawing.Size(1462, 529);
+            this.ClientSize = new System.Drawing.Size(1077, 568);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Controls.Add(this.menuStrip1);
-            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.MainMenuStrip = this.menuStrip1;
-            this.Margin = new System.Windows.Forms.Padding(10, 9, 10, 9);
+            this.Margin = new System.Windows.Forms.Padding(7, 7, 7, 7);
             this.Name = "Form1";
             this.Text = "GlobalOPT";
             this.TopMost = true;
@@ -340,6 +358,7 @@
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
     }
 }
 

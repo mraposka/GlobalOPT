@@ -41,8 +41,7 @@ namespace GlobalOPT
         static string gitRepoName = gitRepoURL.Split('/').Last();
         static string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
         static string winDir = Path.GetPathRoot(System.Environment.GetEnvironmentVariable("WINDIR"));
-        static string gitRepoClonePath = desktopPath + "\\GlobalOPTFW\\" + gitRepoName + "\\globalopt";
-        static string dockerFilePath = desktopPath + "\\GlobalOPTFW\\" + gitRepoName;
+        static string gitRepoClonePath = desktopPath + "\\GlobalOPTFW\\" + gitRepoName + "\\globalopt"; 
         static string textFilePath = desktopPath + "\\result.txt";
         static string algorithm = "", iteration = "", threshold = "", depth = "", num_matrices = "", bfi = "";
         private const int WM_VSCROLL = 277;
@@ -60,7 +59,7 @@ namespace GlobalOPT
             return false;
         }
 
-        void RunDockerBuild()//run the docker image
+        private void RunDockerBuild()//run the docker image
         {
             //Runs created docker build
             Echo("Executing...");
@@ -77,6 +76,10 @@ namespace GlobalOPT
             File.AppendAllText(textFilePath, buildOutput);
             Echo("Result file succesfully written on result file on Desktop");
             //Saving results in result.txt file
+            Thread.Sleep(3000);
+            this.output.Clear();
+            ClearAndUpdate();
+            backgroundWorker1.RunWorkerAsync();
         }
         void InstallRequiredSoftwares()//Install docker and git if its not installed
         {
@@ -195,9 +198,11 @@ namespace GlobalOPT
                 ChangeParameters();//Change parameter.txt with inserted params
                 Echo("Implementing completed");
             }
+            string text=algorithm+iteration+threshold+depth+num_matrices+bfi;
+            Echo(text,Color.White);
             Thread.Sleep(100);
             Echo("Building Docker Image...");
-            strCmdText = "/C @echo off &  cd " + dockerFilePath + " & docker build . -t " + tag + ":" + name;
+            strCmdText = "/C @echo off &  cd " + gitRepoClonePath + " & docker build . -t " + tag + ":" + name;
             RunCommand();
             Echo("Docker Image Built Succesfully!");
             //Building docker image  
@@ -252,7 +257,7 @@ namespace GlobalOPT
         {
             Process process = new System.Diagnostics.Process();
             ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
-            startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
+            startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Normal;
             startInfo.CreateNoWindow = true;
             startInfo.FileName = "cmd.exe";
             startInfo.UseShellExecute = false;
@@ -315,7 +320,7 @@ namespace GlobalOPT
             if (!isDockerRunning)//is docker not running start it
             {
                 Echo("Docker starting.");
-                StartDocker();
+                //StartDocker(); Docker start error
                 Thread.Sleep(10000);//docker engine will startup in 10s(idk why)
                 Echo("Docker started.");
             }
@@ -405,13 +410,18 @@ namespace GlobalOPT
             var procs = Process.GetProcessesByName("cmd");
             foreach(var proc in procs)
             {   
-                ShowWindow(proc.MainWindowHandle, 0);
+                ShowWindow(proc.MainWindowHandle, 5);
             } 
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Application.Exit();
+        }
+
+        private void killServicesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            KillDocker();
         }
 
         private void aboutUsToolStripMenuItem_Click(object sender, EventArgs e)

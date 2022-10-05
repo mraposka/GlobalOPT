@@ -48,10 +48,11 @@
             this.restartServicesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clearConsoleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutUsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.killServicesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.matricesNumeric)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bfiNumeric)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.depthNumeric)).BeginInit();
@@ -69,7 +70,7 @@
             this.output.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.output.ForeColor = System.Drawing.Color.White;
             this.output.Location = new System.Drawing.Point(441, 2);
-            this.output.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.output.Margin = new System.Windows.Forms.Padding(2);
             this.output.Name = "output";
             this.output.ReadOnly = true;
             this.output.Size = new System.Drawing.Size(634, 540);
@@ -95,7 +96,7 @@
             // 
             this.matricesNumeric.Enabled = false;
             this.matricesNumeric.Location = new System.Drawing.Point(316, 183);
-            this.matricesNumeric.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.matricesNumeric.Margin = new System.Windows.Forms.Padding(2);
             this.matricesNumeric.Name = "matricesNumeric";
             this.matricesNumeric.Size = new System.Drawing.Size(108, 35);
             this.matricesNumeric.TabIndex = 11;
@@ -104,7 +105,7 @@
             // 
             this.bfiNumeric.Enabled = false;
             this.bfiNumeric.Location = new System.Drawing.Point(315, 277);
-            this.bfiNumeric.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.bfiNumeric.Margin = new System.Windows.Forms.Padding(2);
             this.bfiNumeric.Name = "bfiNumeric";
             this.bfiNumeric.Size = new System.Drawing.Size(108, 35);
             this.bfiNumeric.TabIndex = 15;
@@ -117,7 +118,7 @@
             this.algorithmSelection.Items.AddRange(new object[] {
             "Use Last Parameters Or Default"});
             this.algorithmSelection.Location = new System.Drawing.Point(14, 43);
-            this.algorithmSelection.Margin = new System.Windows.Forms.Padding(7, 7, 7, 7);
+            this.algorithmSelection.Margin = new System.Windows.Forms.Padding(7);
             this.algorithmSelection.Name = "algorithmSelection";
             this.algorithmSelection.Size = new System.Drawing.Size(410, 41);
             this.algorithmSelection.TabIndex = 5;
@@ -138,7 +139,7 @@
             // 
             this.depthNumeric.Enabled = false;
             this.depthNumeric.Location = new System.Drawing.Point(316, 230);
-            this.depthNumeric.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.depthNumeric.Margin = new System.Windows.Forms.Padding(2);
             this.depthNumeric.Name = "depthNumeric";
             this.depthNumeric.Size = new System.Drawing.Size(108, 35);
             this.depthNumeric.TabIndex = 14;
@@ -147,7 +148,7 @@
             // 
             this.thresholdNumeric.Enabled = false;
             this.thresholdNumeric.Location = new System.Drawing.Point(316, 136);
-            this.thresholdNumeric.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.thresholdNumeric.Margin = new System.Windows.Forms.Padding(2);
             this.thresholdNumeric.Name = "thresholdNumeric";
             this.thresholdNumeric.Size = new System.Drawing.Size(108, 35);
             this.thresholdNumeric.TabIndex = 13;
@@ -178,7 +179,7 @@
             // 
             this.iterationNumeric.Enabled = false;
             this.iterationNumeric.Location = new System.Drawing.Point(316, 89);
-            this.iterationNumeric.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.iterationNumeric.Margin = new System.Windows.Forms.Padding(2);
             this.iterationNumeric.Name = "iterationNumeric";
             this.iterationNumeric.Size = new System.Drawing.Size(108, 35);
             this.iterationNumeric.TabIndex = 12;
@@ -188,7 +189,7 @@
             this.RunButton.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.RunButton.Enabled = false;
             this.RunButton.Location = new System.Drawing.Point(14, 343);
-            this.RunButton.Margin = new System.Windows.Forms.Padding(7, 7, 7, 7);
+            this.RunButton.Margin = new System.Windows.Forms.Padding(7);
             this.RunButton.Name = "RunButton";
             this.RunButton.Size = new System.Drawing.Size(410, 37);
             this.RunButton.TabIndex = 2;
@@ -221,6 +222,7 @@
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.killServicesToolStripMenuItem,
             this.restartServicesToolStripMenuItem,
             this.clearConsoleToolStripMenuItem,
             this.aboutUsToolStripMenuItem,
@@ -253,6 +255,13 @@
             this.aboutUsToolStripMenuItem.Text = "About Us";
             this.aboutUsToolStripMenuItem.Click += new System.EventHandler(this.aboutUsToolStripMenuItem_Click);
             // 
+            // exitToolStripMenuItem
+            // 
+            this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(38, 20);
+            this.exitToolStripMenuItem.Text = "Exit";
+            this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
+            // 
             // timer1
             // 
             this.timer1.Enabled = true;
@@ -268,7 +277,7 @@
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.GrowStyle = System.Windows.Forms.TableLayoutPanelGrowStyle.FixedSize;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 24);
-            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(2);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 1;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
@@ -292,17 +301,17 @@
             this.panel1.Controls.Add(this.bfiLabel);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(2, 2);
-            this.panel1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.panel1.Margin = new System.Windows.Forms.Padding(2);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(435, 540);
             this.panel1.TabIndex = 20;
             // 
-            // exitToolStripMenuItem
+            // killServicesToolStripMenuItem
             // 
-            this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(38, 20);
-            this.exitToolStripMenuItem.Text = "Exit";
-            this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
+            this.killServicesToolStripMenuItem.Name = "killServicesToolStripMenuItem";
+            this.killServicesToolStripMenuItem.Size = new System.Drawing.Size(80, 20);
+            this.killServicesToolStripMenuItem.Text = "Kill Services";
+            this.killServicesToolStripMenuItem.Click += new System.EventHandler(this.killServicesToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -314,7 +323,7 @@
             this.Controls.Add(this.menuStrip1);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.MainMenuStrip = this.menuStrip1;
-            this.Margin = new System.Windows.Forms.Padding(7, 7, 7, 7);
+            this.Margin = new System.Windows.Forms.Padding(7);
             this.Name = "Form1";
             this.Text = "GlobalOPT";
             this.TopMost = true;
@@ -359,6 +368,7 @@
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem killServicesToolStripMenuItem;
     }
 }
 

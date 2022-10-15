@@ -37,28 +37,16 @@ namespace GlobalOPT
         static string strCmdText;
         static string tag = "fw";
         static string name = "opt";
-        static string gitRepoURL = "https://github.com/mraposka/DockerOPT";
+        static string gitRepoURL = "https://github.com/demirmehmet0/GlobalOptFramework";
         static string gitRepoName = gitRepoURL.Split('/').Last();
         static string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
         static string winDir = Path.GetPathRoot(System.Environment.GetEnvironmentVariable("WINDIR"));
-        static string gitRepoClonePath = desktopPath + "\\GlobalOPTFW\\" + gitRepoName + "\\globalopt"; 
+        static string gitRepoClonePath = desktopPath + "\\GlobalOPTFW\\" + gitRepoName+ "\\"; 
         static string textFilePath = desktopPath + "\\result.txt";
         static string algorithm = "", iteration = "", threshold = "", depth = "", num_matrices = "", bfi = "";
         private const int WM_VSCROLL = 277;
         private const int SB_PAGEBOTTOM = 7;
-
-        private bool Is_Form_Loaded_Already(string FormName)
-        {
-            foreach (Form form_loaded in Application.OpenForms)
-            {
-                if (form_loaded.Text.IndexOf(FormName) >= 0)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-
+         
         private void RunDockerBuild()//run the docker image
         {
             //Runs created docker build
@@ -182,7 +170,7 @@ namespace GlobalOPT
 
         void CreateDockerImage()//Building docker image with params
         {
-            //Building docker image
+            //Building docker imageC:\Users\kadir\OneDrive\Desktop\GlobalOPTFW\GlobalOptFramework\matrices
             Echo("Getting parameters...");
             string oldParameters = File.ReadAllText(gitRepoClonePath + "\\parameter.txt");
             string[] lines = oldParameters.Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
@@ -249,7 +237,7 @@ namespace GlobalOPT
         void ChangeParameters()
         {
             //Changing the parameter.txt
-            string parameter = "ALGORITHM=" + algorithm + "\r\nMATRIX_PATH=matrix.txt\r\nITERATION=" + iteration + "\r\nTHRESHOLD=" + threshold + "\r\nDEPTH=" + depth + "\r\nNUM_MATRICES=" + num_matrices + "\r\nBFI=" + bfi + "";
+            string parameter = "ALGORITHM=" + algorithm + "\r\nMATRIX_PATH=matrices/matrix.txt\r\nITERATION=" + iteration + "\r\nTHRESHOLD=" + threshold + "\r\nDEPTH=" + depth + "\r\nNUM_MATRICES=" + num_matrices + "\r\nBFI=" + bfi + "";
             File.WriteAllText(gitRepoClonePath + "\\parameter.txt", parameter);
             //Changing the parameter.txt
         }
@@ -320,7 +308,7 @@ namespace GlobalOPT
             if (!isDockerRunning)//is docker not running start it
             {
                 Echo("Docker starting.");
-                //StartDocker(); Docker start error
+                StartDocker();
                 Thread.Sleep(10000);//docker engine will startup in 10s(idk why)
                 Echo("Docker started.");
             }

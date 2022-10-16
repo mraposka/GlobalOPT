@@ -33,7 +33,6 @@ namespace GlobalOPT
         private static extern IntPtr SendMessage(IntPtr hWnd, int wMsg, IntPtr wParam, IntPtr lParam);
 
         static bool softwareInstallation = false;
-        static bool isDockerRunning = false;//Is docker running variable
         static string strCmdText;
         static string tag = "fw";
         static string name = "opt";
@@ -41,12 +40,13 @@ namespace GlobalOPT
         static string gitRepoName = gitRepoURL.Split('/').Last();
         static string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
         static string winDir = Path.GetPathRoot(System.Environment.GetEnvironmentVariable("WINDIR"));
-        static string gitRepoClonePath = desktopPath + "\\GlobalOPTFW\\" + gitRepoName+ "\\"; 
+        static string gitRepoClonePath = desktopPath + "\\GlobalOPTFW\\" + gitRepoName + "\\";
         static string textFilePath = desktopPath + "\\result.txt";
         static string algorithm = "", iteration = "", threshold = "", depth = "", num_matrices = "", bfi = "";
         private const int WM_VSCROLL = 277;
         private const int SB_PAGEBOTTOM = 7;
-         
+        private int dockerTimeout = 30;
+
         private void RunDockerBuild()//run the docker image
         {
             //Runs created docker build
@@ -100,17 +100,12 @@ namespace GlobalOPT
                 process.WaitForExit();
                 Echo("Git installed");
                 softwareInstallation = true;//is any software installed
-                Restart();//Restarting program for git commands
+                Application.Restart();//Restarting program for git commands
                 //Installing Git 
             }
             else
                 Echo("Git found.");
-        }
-        void Restart()//Restart the application
-        {
-            System.Diagnostics.Process.Start(Assembly.GetExecutingAssembly().Location);
-            Application.Exit();
-        }
+        } 
         void DockerInstall()//Installing Docker via powershell
         {
             Echo("Checking Docker...");
@@ -182,12 +177,12 @@ namespace GlobalOPT
                 threshold = threshold != string.Empty ? threshold : lines[3].Split('=')[1];
                 depth = depth != string.Empty ? depth : lines[4].Split('=')[1];
                 num_matrices = num_matrices != string.Empty ? num_matrices : lines[5].Split('=')[1];
-                bfi = bfi != string.Empty ? bfi : lines[6].Split('=')[1]; 
+                bfi = bfi != string.Empty ? bfi : lines[6].Split('=')[1];
                 ChangeParameters();//Change parameter.txt with inserted params
                 Echo("Implementing completed");
             }
-            string text=algorithm+iteration+threshold+depth+num_matrices+bfi;
-            Echo(text,Color.White);
+            string text = algorithm + iteration + threshold + depth + num_matrices + bfi;
+            Echo(text, Color.White);
             Thread.Sleep(100);
             Echo("Building Docker Image...");
             strCmdText = "/C @echo off &  cd " + gitRepoClonePath + " & docker build . -t " + tag + ":" + name;
@@ -212,6 +207,7 @@ namespace GlobalOPT
         }
         void ClearAndUpdate()//Clear old builds and update repo if need
         {
+           
             //Updating repo
             Echo("Clearing old builds and updating repository...");
             if (Directory.Exists(gitRepoClonePath))//if repo exists update repo
@@ -228,9 +224,15 @@ namespace GlobalOPT
             //Clearing all docker images 
             Echo("Clearing old docker images...");
             strCmdText = "/C for /F %i in ('docker images -a -q') do docker rmi -f %i";
-            RunCommand();
+            RunCommand(false);
             Echo("All Docker Image Cleared!");
             //Clearing all docker images
+            //Clearing all docker containers   
+            Echo("Clearing old docker containers...");
+            strCmdText = "/C echo y|docker container prune";
+            RunCommand(false);
+            Echo("All Docker Containers Cleared!");
+            //Clearing all docker containers
             Echo("All Cleared");
         }
 
@@ -259,7 +261,24 @@ namespace GlobalOPT
             Thread.Sleep(100);
             return output;
         }
-
+        string RunCommand(bool a)//Function that run commands on cmd.exe
+        {
+            Process process = new System.Diagnostics.Process();
+            ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
+            startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Normal;
+            startInfo.CreateNoWindow = true;
+            startInfo.FileName = "cmd.exe";
+            startInfo.UseShellExecute = false;
+            startInfo.RedirectStandardOutput = true;
+            startInfo.Arguments = strCmdText;
+            process.StartInfo = startInfo;
+            process.Start();
+            string output = process.StandardOutput.ReadToEnd();
+            process.WaitForExit();
+            if(a)Echo(output, Color.White);
+            Thread.Sleep(100);
+            return output;
+        }
         private void RunButton_Click(object sender, EventArgs e)
         {
             iteration = iterationNumeric.Value.ToString();
@@ -278,21 +297,7 @@ namespace GlobalOPT
             Echo("Checking required softwares...");
 
             //Is docker running checking
-            Process[] pname = Process.GetProcessesByName("com.docker.backend");
-            if (pname.Length == 0)
-            {
-                KillDocker(); Echo("Docker is not running or installed!");
-            }
-            else
-            {
-                pname = Process.GetProcessesByName("docker");
-                if (pname.Length == 0)
-                {
-                    KillDocker(); Echo("Docker is not running or installed!");
-                }
-                else
-                { isDockerRunning = true; Echo("Docker is running!"); }
-            }
+
             InstallRequiredSoftwares();//Install docker and git if its not installed
             try
             {
@@ -304,14 +309,26 @@ namespace GlobalOPT
                 Echo("Checking completed. System now has all required softwares");
             else
                 Echo("Checking completed. System has all required softwares");
-            DockerStartup:
-            if (!isDockerRunning)//is docker not running start it
+
+            Echo("Docker starting...");
+            Echo("Waiting for docker");
+        DockerStartup:
+            dockerTimer.Start();
+            Process[] pname = Process.GetProcessesByName("com.docker.backend");
+            if (pname.Length == 0 && dockerTimeout > 0)
             {
-                Echo("Docker starting.");
                 StartDocker();
-                Thread.Sleep(10000);//docker engine will startup in 10s(idk why)
-                Echo("Docker started.");
+                goto DockerStartup;
             }
+            else if (dockerTimeout <= 0 && pname.Length == 0)
+            {
+                Echo("Docker startup failed. Restarting...");
+                Thread.Sleep(2000);
+                Application.Restart();
+            }
+            dockerTimer.Stop();
+
+            Echo("Docker started!");
             ClearAndUpdate();//Clear old builds and update repo if need
             Echo("Insert Parameters");
             EnableInputs();
@@ -321,7 +338,7 @@ namespace GlobalOPT
         {
             algorithmSelection.Enabled = true;
             algorithmLabel.Enabled = true;
-            RunButton.Enabled=true;
+            RunButton.Enabled = true;
         }
 
         private void Form1_Shown(object sender, EventArgs e)
@@ -331,7 +348,7 @@ namespace GlobalOPT
 
         private void algorithmSelection_SelectedIndexChanged(object sender, EventArgs e)
         {
-            algorithm = algorithmSelection.SelectedIndex.ToString(); 
+            algorithm = algorithmSelection.SelectedIndex.ToString();
             if (algorithm != "0")//If 0 selected for algorithm it will use default settings(on git repo) or if you have your params from last time it will use it
             {
                 switch (algorithm)
@@ -379,13 +396,12 @@ namespace GlobalOPT
                 Echo("Last parameters will be used");
             }
 
-        } 
+        }
 
         private void restartServicesToolStripMenuItem_Click_1(object sender, EventArgs e)
         {
             KillDocker();
-            Thread.Sleep(100);
-            Restart();
+            Thread.Sleep(100); 
         }
 
         private void clearConsoleToolStripMenuItem_Click(object sender, EventArgs e)
@@ -396,10 +412,10 @@ namespace GlobalOPT
         private void timer1_Tick(object sender, EventArgs e)
         {
             var procs = Process.GetProcessesByName("cmd");
-            foreach(var proc in procs)
-            {   
+            foreach (var proc in procs)
+            {
                 ShowWindow(proc.MainWindowHandle, 5);
-            } 
+            }
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -412,48 +428,72 @@ namespace GlobalOPT
             KillDocker();
         }
 
+        private void dockerTimer_Tick(object sender, EventArgs e)
+        {
+            dockerTimeout--;
+        }
+
         private void aboutUsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Process.Start("https://github.com/mraposka");
-        } 
+        }
 
         static void ProcKil(string proc)
         {
-            foreach (var process in Process.GetProcessesByName(proc))
-                process.Kill();
+            string arg0 = "/F /IM " + proc + ".exe";
+            string arg1 = "/F /IM " + proc;  
+            Process process = new System.Diagnostics.Process();
+            ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
+            startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Normal;
+            startInfo.CreateNoWindow = true;
+            startInfo.FileName = "taskkill";
+            startInfo.UseShellExecute = false;
+            startInfo.RedirectStandardOutput = true;
+            startInfo.Arguments = arg0;
+            process.StartInfo = startInfo;
+            process.Start(); 
+            process.WaitForExit(); 
+            startInfo.Arguments = arg1;
+            process.StartInfo = startInfo;
+            process.Start();
+            process.WaitForExit();
+
         }
         static void KillDocker()
         {
             ProcKil("docker");
             ProcKil("com.docker.vpnkit");
-            ProcKil("com.docker.proxy");
+            ProcKil("com.docker.proxy"); 
             ProcKil("com.docker.backend");
             ProcKil("Docker Desktop");
+            ProcKil("Docker Desktop Service");
+            ProcKil("com.docker.service");
         }
 
         private void Form1_Load(object sender, EventArgs e)
-        {
-            string algorithms=
-            "ALGORITHM = 1 - XZLBZ,"+
-            "ALGORITHM = 2 - BP,"+
-            "ALGORITHM = 3 - RNBP,"+
-            "ALGORITHM = 4 - A1,"+
-            "ALGORITHM = 5 - A2,"+
-            "ALGORITHM = 6 - Paar1,"+
-            "ALGORITHM = 7 - Paar2,"+
-            "ALGORITHM = 8 - LWFWSW,"+
-            "ALGORITHM = 9 - BFI,"+
-            "ALGORITHM = 10 - BFI-Paar1,"+
-            "ALGORITHM = 11 - BFI-RPaar1,"+
-            "ALGORITHM = 12 - BFI-BP,"+
-            "ALGORITHM = 13 - BFI-A1,"+
-            "ALGORITHM = 14 - BFI-A2,"+
-            "ALGORITHM = 15 - BFI-RNBP,"+
+        { 
+            string algorithms =
+            "ALGORITHM = 1 - XZLBZ," +
+            "ALGORITHM = 2 - BP," +
+            "ALGORITHM = 3 - RNBP," +
+            "ALGORITHM = 4 - A1," +
+            "ALGORITHM = 5 - A2," +
+            "ALGORITHM = 6 - Paar1," +
+            "ALGORITHM = 7 - Paar2," +
+            "ALGORITHM = 8 - LWFWSW," +
+            "ALGORITHM = 9 - BFI," +
+            "ALGORITHM = 10 - BFI-Paar1," +
+            "ALGORITHM = 11 - BFI-RPaar1," +
+            "ALGORITHM = 12 - BFI-BP," +
+            "ALGORITHM = 13 - BFI-A1," +
+            "ALGORITHM = 14 - BFI-A2," +
+            "ALGORITHM = 15 - BFI-RNBP," +
             "ALGORITHM = 16 - BFI-BP-depthConstrained,";
-            for(int i = 0; i < algorithms.Split(',').Length-1; i++)
+            for (int i = 0; i < algorithms.Split(',').Length - 1; i++)
             {
                 algorithmSelection.Items.Add(algorithms.Split(',')[i]);
             }
+            StartDocker();
         }
 
         void Echo(string text, Color color = default)//function that logs with color on terminal 

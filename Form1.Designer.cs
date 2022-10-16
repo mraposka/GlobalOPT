@@ -45,14 +45,15 @@
             this.depthLabel = new System.Windows.Forms.Label();
             this.algorithmLabel = new System.Windows.Forms.Label();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.killServicesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.restartServicesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clearConsoleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutUsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.hidingTimer = new System.Windows.Forms.Timer(this.components);
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.killServicesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.dockerTimer = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.matricesNumeric)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bfiNumeric)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.depthNumeric)).BeginInit();
@@ -234,6 +235,13 @@
             this.menuStrip1.TabIndex = 18;
             this.menuStrip1.Text = "menuStrip1";
             // 
+            // killServicesToolStripMenuItem
+            // 
+            this.killServicesToolStripMenuItem.Name = "killServicesToolStripMenuItem";
+            this.killServicesToolStripMenuItem.Size = new System.Drawing.Size(80, 20);
+            this.killServicesToolStripMenuItem.Text = "Kill Services";
+            this.killServicesToolStripMenuItem.Click += new System.EventHandler(this.killServicesToolStripMenuItem_Click);
+            // 
             // restartServicesToolStripMenuItem
             // 
             this.restartServicesToolStripMenuItem.Name = "restartServicesToolStripMenuItem";
@@ -262,10 +270,10 @@
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
-            // timer1
+            // hidingTimer
             // 
-            this.timer1.Enabled = true;
-            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            this.hidingTimer.Enabled = true;
+            this.hidingTimer.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // tableLayoutPanel1
             // 
@@ -306,12 +314,11 @@
             this.panel1.Size = new System.Drawing.Size(435, 540);
             this.panel1.TabIndex = 20;
             // 
-            // killServicesToolStripMenuItem
+            // dockerTimer
             // 
-            this.killServicesToolStripMenuItem.Name = "killServicesToolStripMenuItem";
-            this.killServicesToolStripMenuItem.Size = new System.Drawing.Size(80, 20);
-            this.killServicesToolStripMenuItem.Text = "Kill Services";
-            this.killServicesToolStripMenuItem.Click += new System.EventHandler(this.killServicesToolStripMenuItem_Click);
+            this.dockerTimer.Enabled = true;
+            this.dockerTimer.Interval = 1000;
+            this.dockerTimer.Tick += new System.EventHandler(this.dockerTimer_Tick);
             // 
             // Form1
             // 
@@ -326,7 +333,6 @@
             this.Margin = new System.Windows.Forms.Padding(7);
             this.Name = "Form1";
             this.Text = "GlobalOPT";
-            this.TopMost = true;
             this.Load += new System.EventHandler(this.Form1_Load);
             this.Shown += new System.EventHandler(this.Form1_Shown);
             ((System.ComponentModel.ISupportInitialize)(this.matricesNumeric)).EndInit();
@@ -364,11 +370,12 @@
         private System.Windows.Forms.ToolStripMenuItem restartServicesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem clearConsoleToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aboutUsToolStripMenuItem;
-        private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.Timer hidingTimer;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem killServicesToolStripMenuItem;
+        private System.Windows.Forms.Timer dockerTimer;
     }
 }
 

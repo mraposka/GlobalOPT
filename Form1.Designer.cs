@@ -98,6 +98,11 @@
             this.matricesNumeric.Enabled = false;
             this.matricesNumeric.Location = new System.Drawing.Point(316, 183);
             this.matricesNumeric.Margin = new System.Windows.Forms.Padding(2);
+            this.matricesNumeric.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
             this.matricesNumeric.Name = "matricesNumeric";
             this.matricesNumeric.Size = new System.Drawing.Size(108, 35);
             this.matricesNumeric.TabIndex = 11;
@@ -107,6 +112,11 @@
             this.bfiNumeric.Enabled = false;
             this.bfiNumeric.Location = new System.Drawing.Point(315, 277);
             this.bfiNumeric.Margin = new System.Windows.Forms.Padding(2);
+            this.bfiNumeric.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
             this.bfiNumeric.Name = "bfiNumeric";
             this.bfiNumeric.Size = new System.Drawing.Size(108, 35);
             this.bfiNumeric.TabIndex = 15;
@@ -141,6 +151,11 @@
             this.depthNumeric.Enabled = false;
             this.depthNumeric.Location = new System.Drawing.Point(316, 230);
             this.depthNumeric.Margin = new System.Windows.Forms.Padding(2);
+            this.depthNumeric.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
             this.depthNumeric.Name = "depthNumeric";
             this.depthNumeric.Size = new System.Drawing.Size(108, 35);
             this.depthNumeric.TabIndex = 14;
@@ -150,6 +165,11 @@
             this.thresholdNumeric.Enabled = false;
             this.thresholdNumeric.Location = new System.Drawing.Point(316, 136);
             this.thresholdNumeric.Margin = new System.Windows.Forms.Padding(2);
+            this.thresholdNumeric.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
             this.thresholdNumeric.Name = "thresholdNumeric";
             this.thresholdNumeric.Size = new System.Drawing.Size(108, 35);
             this.thresholdNumeric.TabIndex = 13;
@@ -181,6 +201,11 @@
             this.iterationNumeric.Enabled = false;
             this.iterationNumeric.Location = new System.Drawing.Point(316, 89);
             this.iterationNumeric.Margin = new System.Windows.Forms.Padding(2);
+            this.iterationNumeric.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
             this.iterationNumeric.Name = "iterationNumeric";
             this.iterationNumeric.Size = new System.Drawing.Size(108, 35);
             this.iterationNumeric.TabIndex = 12;

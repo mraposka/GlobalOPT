@@ -26,4 +26,4 @@
 
 # How does it work?
 #### 1- Application will check docker and git installations. If you don't have docker or git it will automatically install (with permission ofc). 
-#### 2- After installation, application will clone the [OptFramework](https://github.com/mraposka/DockerOPT) repo, build it on docker(ubuntu) and runs it with your parameters.
+#### 2- After installation, application will clone the [OptFramework](https://github.com/demirmehmet0/GlobalOptFramework) repo, build it on docker(ubuntu) and runs it with your parameters.
